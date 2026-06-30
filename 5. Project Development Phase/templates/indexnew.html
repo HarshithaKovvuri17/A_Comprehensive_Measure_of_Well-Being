@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Human Development Index — Predict</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #090e1a;
+            --text-color: #ffffff;
+            --text-muted: #8c9bb4;
+            --card-bg: #241901;
+            --border-color: #d0a345; /* Golden/brass border */
+            --brass: #c89b3c;
+            --brass-hover: #e5b955;
+        }
+        body.light-theme {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --text-muted: #475569;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --border-color: #d0a345;
+            --brass: #b08224;
+            --brass-hover: #c6952c;
+        }
+        body.light-theme {
+            background: linear-gradient(to bottom, #523a08 0%, #f8fafc 100%);
+            background-attachment: fixed;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #523a08 0%, #000000 100%);
+            background-attachment: fixed;
+            color: var(--text-color);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        /* Header / Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 6%;
+            background-color: rgba(7, 11, 19, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-brand span {
+            color: #c89b3c;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .navbar-menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-menu a.active, .navbar-menu a:hover {
+            color: var(--text-color);
+        }
+
+        .theme-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--text-color);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme .navbar {
+            background-color: rgba(248, 250, 252, 0.8);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        body.light-theme .navbar-brand {
+            color: #0f172a;
+        }
+        body.light-theme .navbar-menu a {
+            color: #475569;
+        }
+        body.light-theme .navbar-menu a.active, body.light-theme .navbar-menu a:hover {
+            color: #0f172a;
+        }
+        body.light-theme .theme-toggle {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.08);
+            color: #475569;
+        }
+        body.light-theme .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #0f172a;
+        }
+
+        /* Header titles */
+        .prediction-header {
+            margin-top: 60px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .prediction-header .eyebrow {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.85), 0 0 20px rgba(208, 163, 69, 0.5);
+            margin-bottom: 12px;
+        }
+        .prediction-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 40px;
+            font-weight: 400;
+            margin: 8px 0 16px 0;
+            color: #d0a345;
+        }
+        .prediction-header p {
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7), 0 0 15px rgba(208, 163, 69, 0.4);
+            font-size: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 48px;
+            box-sizing: border-box;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 15px rgba(208, 163, 69, 0.4), 0 0 40px rgba(208, 163, 69, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-4px) perspective(1500px) rotateX(1deg);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.5), 0 0 30px rgba(208, 163, 69, 0.65), 0 0 70px rgba(208, 163, 69, 0.28);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 32px;
+        }
+        .form-grid-full {
+            grid-column: span 2;
+        }
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-grid-full {
+                grid-column: span 1;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--brass);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            height: 58px;
+            padding: 0 24px;
+            box-sizing: border-box;
+            background: #241901;
+            border: 1.5px solid #d0a345; /* Golden border */
+            border-radius: 50px;
+            color: #d0a345;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 17px;
+            outline: none;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            line-height: 58px;
+        }
+
+        /* Re-add dropdown arrow for select */
+        .form-select {
+            background: #241901 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23d0a345' d='M6 8L0 0h12z'/%3E%3C/svg%3E") no-repeat right 20px center;
+            background-size: 12px;
+            color: #d0a345;
+            padding-right: 44px;
+        }
+
+        /* Make select placeholder color match input placeholder when no country is selected */
+        .form-select:invalid {
+            color: rgba(208, 163, 69, 0.45);
+        }
+
+        /* Visually hide native select so native validation still works */
+        .form-select.custom-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* Custom Dropdown Styles */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+            display: block;
+            box-sizing: border-box;
+            z-index: 10;
+            transform-style: preserve-3d;
+            transform: translateZ(25px);
+        }
+
+        .custom-select-wrapper.active {
+            z-index: 9999;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            height: 58px;
+            padding: 0 24px;
+            box-sizing: border-box;
+            background: #241901;
+            border: 1.5px solid #d0a345;
+            border-radius: 50px;
+            color: rgba(208, 163, 69, 0.45); /* Placeholder style */
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 17px;
+            outline: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .custom-select-wrapper.active .custom-select-trigger {
+            border-color: #d0a345;
+            box-shadow: 0 0 10px rgba(208, 163, 69, 0.35);
+        }
+
+        .custom-select-trigger.has-value {
+            color: #ffffff;
+        }
+
+        .custom-select-value {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 12px;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .custom-select-arrow {
+            width: 12px;
+            height: 8px;
+            flex-shrink: 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23d0a345' d='M6 8L0 0h12z'/%3E%3C/svg%3E") no-repeat center center;
+            background-size: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .custom-select-wrapper.active .custom-select-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Dropdown options container box */
+        .custom-select-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            max-height: 280px;
+            overflow-y: auto;
+            background: #704c04; /* Make that box fill color to #704c04 */
+            border: 1.5px solid #241901;
+            border-radius: 20px;
+            z-index: 10000;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45), 0 0 15px rgba(112, 76, 4, 0.3);
+            display: none;
+            /* Float high in 3D space so it sits above adjacent form inputs that have translateZ(25px) */
+            transform: translateZ(100px);
+            transform-style: preserve-3d;
+        }
+
+        .custom-select-wrapper.active .custom-select-options {
+            display: block;
+        }
+
+        .custom-select-option {
+            padding: 14px 24px;
+            color: #d0a345; /* readable gold color on #704c04 background */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Customize Scrollbar of options list */
+        .custom-select-options::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-select-options::-webkit-scrollbar-track {
+            background: #704c04;
+            border-radius: 0 20px 20px 0;
+        }
+        .custom-select-options::-webkit-scrollbar-thumb {
+            background: #523a08;
+            border-radius: 4px;
+            border: 2px solid #704c04;
+        }
+
+        /* Hover and selected state changes */
+        .custom-select-option:hover {
+            background: #523a08 !important; /* make that grey colour to #523a08 */
+            color: #ffffff !important; /* contrasting text color */
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 15px #d0a345; /* make that text to glow */
+        }
+
+        .custom-select-option.selected {
+            background: #523a08;
+            color: #ffffff;
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 15px #d0a345; /* make that text to glow */
+        }
+
+        /* Style number input spin arrows to match theme */
+        .form-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 40px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='32' viewBox='0 0 16 32'%3E%3Cpath fill='%23d0a345' d='M8 6L13 12H3ZM8 26L13 20H3Z'/%3E%3C/svg%3E") no-repeat center center;
+            background-size: 10px 20px;
+            cursor: pointer;
+            margin-right: -6px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .form-input::-webkit-inner-spin-button:hover {
+            opacity: 1;
+        }
+
+        /* Make typed number values white */
+        .form-input {
+            color: #ffffff !important;
+        }
+
+        body.light-theme .form-input {
+            color: #ffffff !important;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: #d0a345;
+            background: #241901;
+            box-shadow: 0 0 10px rgba(208, 163, 69, 0.35);
+        }
+
+        .form-select:focus {
+            background: #241901;
+        }
+
+        .form-input::placeholder {
+            color: rgba(208, 163, 69, 0.45);
+        }
+
+        body.light-theme .form-input, body.light-theme .form-select {
+            background: #241901;
+            border-color: #d0a345;
+            color: #d0a345;
+        }
+
+        body.light-theme .form-select {
+            background: #241901 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23d0a345' d='M6 8L0 0h12z'/%3E%3C/svg%3E") no-repeat right 20px center;
+            background-size: 12px;
+            color: #d0a345;
+        }
+
+        body.light-theme .form-select:invalid {
+            color: rgba(208, 163, 69, 0.45);
+        }
+
+        body.light-theme .form-input::placeholder {
+            color: rgba(208, 163, 69, 0.45);
+        }
+
+        .form-select option {
+            background: #241901;
+            color: #d0a345;
+        }
+
+        .form-select option:checked,
+        .form-select option:hover,
+        .form-select option:focus {
+            background: #241901;
+            color: #d0a345;
+            box-shadow: 0 0 0 100px #241901 inset;
+        }
+
+        body.light-theme .form-select option {
+            background: #241901;
+            color: #d0a345;
+        }
+
+        body.light-theme .form-select option:checked,
+        body.light-theme .form-select option:hover,
+        body.light-theme .form-select option:focus {
+            background: #241901;
+            color: #d0a345;
+            box-shadow: 0 0 0 100px #241901 inset;
+        }
+
+        .form-help {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Buttons Row */
+        .btn-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .btn-predict {
+            flex: 1;
+            padding: 16px;
+            background: linear-gradient(90deg, #b8892e 0%, #d0a345 100%);
+            border: none;
+            border-radius: 50px;
+            color: #000000;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-bottom: 3.5px solid rgba(0, 0, 0, 0.35) !important;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(208, 163, 69, 0.5);
+        }
+
+        .btn-predict:active, .btn-cancel:active {
+            transform: translateY(2px) !important;
+            border-bottom-width: 1px !important;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-cancel {
+            padding: 16px 36px;
+            background: transparent;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border-bottom: 3.5px solid rgba(0, 0, 0, 0.25) !important;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-color);
+            transform: translateY(-2px);
+        }
+
+        body.light-theme .btn-cancel {
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme .btn-cancel:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .form-container *, .form-container {
+            transform-style: preserve-3d;
+        }
+        .form-container .form-label,
+        .form-container .form-help,
+        .form-container .btn-row,
+        .form-container .form-input,
+        .form-container .form-select {
+            transform: translateZ(25px);
+            transition: transform 0.2s ease;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #04070d;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 64px 6% 32px 6%;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 80px;
+        }
+
+        .footer-cols {
+            max-width: 1400px;
+            margin: 0 auto 48px auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #ffffff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-logo span {
+            color: #c89b3c;
+        }
+
+        .footer-col h4 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin: 0 0 20px 0;
+        }
+
+        .footer-col p {
+            line-height: 1.6;
+            margin: 0;
+            max-width: 320px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 32px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 1024px) {
+            .footer-cols {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <a href="/" class="navbar-brand">
+            <span>•</span> HDI Insight
+        </a>
+        <div class="navbar-menu">
+            <a href="/">Home</a>
+            {% if current_user and current_user.get('role') == 'Admin' %}
+            <a href="/admin" style="color: #c89b3c;">Admin Dashboard</a>
+            {% endif %}
+            <a href="/Prediction" class="active">Prediction</a>
+            <div class="theme-toggle">🌙</div>
+            {% if current_user %}
+            <style>
+                .profile-dropdown { display: none; position: absolute; top: 50px; right: 0; background-color: var(--card-bg, #241901); border: 1px solid var(--border-color, #d0a345); border-radius: 8px; width: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; overflow: hidden; text-align: left; }
+                .profile-dropdown.show { display: block; }
+                .profile-dropdown .user-info { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); line-height: 1.4; }
+                .profile-dropdown .user-info strong { display: block; color: var(--text-color, #fff); font-size: 14px; }
+                .profile-dropdown .user-info span { display: block; color: var(--text-muted, #8c9bb4); font-size: 12px; }
+                .profile-dropdown .dropdown-item { display: block; padding: 12px 15px; color: var(--text-color, #fff); text-decoration: none; font-size: 14px; transition: background 0.3s; }
+                .profile-dropdown .dropdown-item:hover { background-color: rgba(255,255,255,0.05); }
+                body.light-theme .profile-dropdown { box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1); }
+                body.light-theme .profile-dropdown .user-info { border-bottom: 1px solid rgba(0,0,0,0.1); }
+                body.light-theme .profile-dropdown .dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
+            </style>
+            <div class="user-profile" style="position: relative; display: flex; align-items: center; gap: 10px; margin-left: 15px; padding-left: 15px; border-left: 1px solid rgba(255,255,255,0.1);">
+                <img src="https://ui-avatars.com/api/?name={{ current_user.name|urlencode }}&background=c89b3c&color=fff&rounded=true&bold=true" alt="Profile" title="{{ current_user.name }}" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(200, 155, 60, 0.5); transition: border-color 0.3s ease; cursor: pointer;" onclick="document.getElementById('profile-dropdown').classList.toggle('show')">
+                <div id="profile-dropdown" class="profile-dropdown">
+                    <div class="user-info">
+                        <strong>{{ current_user.name }}</strong>
+                        <span>{{ current_user.email }}</span>
+                    </div>
+                    <a href="/logout" class="dropdown-item">Logout</a>
+                </div>
+            </div>
+            <script>
+                document.addEventListener('click', function(e) {
+                    const dropdown = document.getElementById('profile-dropdown');
+                    if (dropdown && dropdown.classList.contains('show') && !e.target.closest('.user-profile')) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            </script>
+            {% else %}
+            <a href="/login" style="margin-left: 15px;">Login</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="prediction-header">
+        <div class="eyebrow">PREDICTION CONSOLE</div>
+        <h1>Enter Country Indicators</h1>
+        <p>All fields are required. Values should reflect the most recent available data for the country.</p>
+    </div>
+
+    <div class="form-container">
+        <form action="/predict" method="POST">
+            <div class="form-grid">
+                
+
+                
+                <div class="form-group">
+                    <label class="form-label">COUNTRY</label>
+                    <select class="form-select" name="country" required>
+                        <option value="" disabled selected>Select the name of the Country</option>
+                <option value="0">Afghanistan</option>
+                <option value="1">Albania</option>
+                <option value="2">Andorra</option>
+                <option value="3">Argentina</option>
+                <option value="4">Armenia</option>
+                <option value="5">Australia</option>
+                <option value="6">Austria</option>
+                <option value="7">Azerbaijan</option>
+                <option value="8">Bahamas</option>
+                <option value="9">Bahrain</option>
+                <option value="10">Bangladesh</option>
+                <option value="11">Barbados</option>
+                <option value="12">Belgium</option>
+                <option value="13">Belize</option>
+                <option value="14">Benin</option>
+                <option value="15">Bhutan</option>
+                <option value="16">Bosnia and Herzegovina</option>
+                <option value="17">Botswana</option>
+                <option value="18">Brazil</option>
+                <option value="19">Brunei Darussalam</option>
+                <option value="20">Bulgaria</option>
+                <option value="21">Burkina Faso</option>
+                <option value="22">Burundi</option>
+                <option value="23">Cambodia</option>
+                <option value="24">Cameroon</option>
+                <option value="25">Canada</option>
+                <option value="26">Cape Verde</option>
+                <option value="27">Central African Republic</option>
+                <option value="28">Chad</option>
+                <option value="29">Chile</option>
+                <option value="30">China</option>
+                <option value="31">Colombia</option>
+                <option value="32">Congo (DRC)</option>
+                <option value="33">Costa Rica</option>
+                <option value="34">Country_162</option>
+                <option value="35">Country_163</option>
+                <option value="36">Country_164</option>
+                <option value="37">Country_165</option>
+                <option value="38">Country_166</option>
+                <option value="39">Country_167</option>
+                <option value="40">Country_168</option>
+                <option value="41">Country_169</option>
+                <option value="42">Country_170</option>
+                <option value="43">Country_171</option>
+                <option value="44">Country_172</option>
+                <option value="45">Country_173</option>
+                <option value="46">Country_174</option>
+                <option value="47">Country_175</option>
+                <option value="48">Country_176</option>
+                <option value="49">Country_177</option>
+                <option value="50">Country_178</option>
+                <option value="51">Country_179</option>
+                <option value="52">Country_180</option>
+                <option value="53">Country_181</option>
+                <option value="54">Country_182</option>
+                <option value="55">Country_183</option>
+                <option value="56">Country_184</option>
+                <option value="57">Country_185</option>
+                <option value="58">Country_186</option>
+                <option value="59">Country_187</option>
+                <option value="60">Country_188</option>
+                <option value="61">Country_189</option>
+                <option value="62">Country_190</option>
+                <option value="63">Country_191</option>
+                <option value="64">Country_192</option>
+                <option value="65">Country_193</option>
+                <option value="66">Country_194</option>
+                <option value="67">Croatia</option>
+                <option value="68">Cuba</option>
+                <option value="69">Cyprus</option>
+                <option value="70">Czech Republic</option>
+                <option value="71">Denmark</option>
+                <option value="72">Djibouti</option>
+                <option value="73">Dominica</option>
+                <option value="74">Dominican Republic</option>
+                <option value="75">Ecuador</option>
+                <option value="76">Egypt</option>
+                <option value="77">El Salvador</option>
+                <option value="78">Equatorial Guinea</option>
+                <option value="79">Eritrea</option>
+                <option value="80">Estonia</option>
+                <option value="81">Ethiopia</option>
+                <option value="82">Finland</option>
+                <option value="83">France</option>
+                <option value="84">Gabon</option>
+                <option value="85">Gambia</option>
+                <option value="86">Georgia</option>
+                <option value="87">Germany</option>
+                <option value="88">Ghana</option>
+                <option value="89">Greece</option>
+                <option value="90">Grenada</option>
+                <option value="91">Guatemala</option>
+                <option value="92">Guinea</option>
+                <option value="93">Guinea-Bissau</option>
+                <option value="94">Guyana</option>
+                <option value="95">Haiti</option>
+                <option value="96">Honduras</option>
+                <option value="97">Hong Kong</option>
+                <option value="98">Hungary</option>
+                <option value="99">Iceland</option>
+                <option value="100">India</option>
+                <option value="101">Indonesia</option>
+                <option value="102">Iraq</option>
+                <option value="103">Ireland</option>
+                <option value="104">Israel</option>
+                <option value="105">Italy</option>
+                <option value="106">Japan</option>
+                <option value="107">Kenya</option>
+                <option value="108">Kiribati</option>
+                <option value="109">Kuwait</option>
+                <option value="110">Kyrgyzstan</option>
+                <option value="111">Latvia</option>
+                <option value="112">Lebanon</option>
+                <option value="113">Lesotho</option>
+                <option value="114">Liberia</option>
+                <option value="115">Libya</option>
+                <option value="116">Liechtenstein</option>
+                <option value="117">Lithuania</option>
+                <option value="118">Luxembourg</option>
+                <option value="119">Madagascar</option>
+                <option value="120">Malawi</option>
+                <option value="121">Malaysia</option>
+                <option value="122">Mali</option>
+                <option value="123">Malta</option>
+                <option value="124">Mauritania</option>
+                <option value="125">Mauritius</option>
+                <option value="126">Mexico</option>
+                <option value="127">Micronesia</option>
+                <option value="128">Moldova</option>
+                <option value="129">Mongolia</option>
+                <option value="130">Montenegro</option>
+                <option value="131">Morocco</option>
+                <option value="132">Mozambique</option>
+                <option value="133">Myanmar</option>
+                <option value="134">Namibia</option>
+                <option value="135">Nepal</option>
+                <option value="136">Netherlands</option>
+                <option value="137">New Zealand</option>
+                <option value="138">Nicaragua</option>
+                <option value="139">Niger</option>
+                <option value="140">Nigeria</option>
+                <option value="141">Norway</option>
+                <option value="142">Pakistan</option>
+                <option value="143">Palau</option>
+                <option value="144">Palestine</option>
+                <option value="145">Panama</option>
+                <option value="146">Paraguay</option>
+                <option value="147">Peru</option>
+                <option value="148">Philippines</option>
+                <option value="149">Poland</option>
+                <option value="150">Portugal</option>
+                <option value="151">Qatar</option>
+                <option value="152">Romania</option>
+                <option value="153">Russia</option>
+                <option value="154">Rwanda</option>
+                <option value="155">Saint Vincent and the Grenadines</option>
+                <option value="156">Samoa</option>
+                <option value="157">Sao Tome and Principe</option>
+                <option value="158">Saudi Arabia</option>
+                <option value="159">Senegal</option>
+                <option value="160">Seychelles</option>
+                <option value="161">Sierra Leone</option>
+                <option value="162">Singapore</option>
+                <option value="163">Slovakia</option>
+                <option value="164">Slovenia</option>
+                <option value="165">Somalia</option>
+                <option value="166">South Africa</option>
+                <option value="167">South Korea</option>
+                <option value="168">South Sudan</option>
+                <option value="169">Spain</option>
+                <option value="170">Sri Lanka</option>
+                <option value="171">Sudan</option>
+                <option value="172">Suriname</option>
+                <option value="173">Sweden</option>
+                <option value="174">Switzerland</option>
+                <option value="175">Tajikistan</option>
+                <option value="176">Tanzania</option>
+                <option value="177">Thailand</option>
+                <option value="178">Timor-Leste</option>
+                <option value="179">Togo</option>
+                <option value="180">Tonga</option>
+                <option value="181">Tunisia</option>
+                <option value="182">Turkey</option>
+                <option value="183">Tuvalu</option>
+                <option value="184">Uganda</option>
+                <option value="185">Ukraine</option>
+                <option value="186">United Arab Emirates</option>
+                <option value="187">United Kingdom</option>
+                <option value="188">United States</option>
+                <option value="189">Uruguay</option>
+                <option value="190">Vanuatu</option>
+                <option value="191">Vietnam</option>
+                <option value="192">Yemen</option>
+                <option value="193">Zambia</option>
+                <option value="194">Zimbabwe</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">LIFE EXPECTANCY (YEARS)</label>
+                    <input type="number" step="0.1" min="1" max="100" class="form-input" name="life_expectancy" placeholder="Enter life expectancy" required>
+                    <span class="form-help">Range: 1-100 years</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">YEARS OF SCHOOLING</label>
+                    <input type="number" step="0.1" min="1" max="30" class="form-input" name="schooling" placeholder="Enter years of schooling" required>
+                    <span class="form-help">Range: 1-30 years</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">GNI PER CAPITA (USD)</label>
+                    <input type="number" step="1" min="740" max="124000" class="form-input" name="gni" placeholder="Enter GNI(range 740-124000)" required>
+                    <span class="form-help">Purchasing-power-adjusted, in USD</span>
+                </div>
+
+                <div class="form-group form-grid-full">
+                    <label class="form-label">INTERNET USERS (%)</label>
+                    <input type="number" step="0.1" min="0" max="100" class="form-input" name="internet_users" placeholder="Enter the number of internet users" required>
+                    <span class="form-help">Percentage of population, 0-100</span>
+                </div>
+
+            </div>
+
+            <div class="btn-row">
+                <button type="submit" class="btn-predict">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up" viewBox="0 0 16 16" style="margin-right: 4px;">
+                        <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07z"/>
+                    </svg>
+                    Predict HDI
+                </button>
+                <a href="/" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-cols">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <span>•</span> HDI Insight
+                </div>
+                <p>A machine-learning system that estimates the Human Development Index from life expectancy, education, income and connectivity indicators.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigate</h4>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/Prediction">Prediction</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Model</h4>
+                <p>Linear Regression<br>90 / 10 train-test split</p>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 HDI Prediction System. Built for educational and research purposes.
+        </div>
+    </footer>
+
+    <script>
+        const toggleBtn = document.querySelector('.theme-toggle');
+        const sunIcon = '☀️';
+        const moonIcon = '🌙';
+
+        toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            if (document.body.classList.contains('light-theme')) {
+                toggleBtn.innerHTML = sunIcon;
+                localStorage.setItem('theme', 'light');
+            } else {
+                toggleBtn.innerHTML = moonIcon;
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+            toggleBtn.innerHTML = sunIcon;
+        } else {
+            toggleBtn.innerHTML = moonIcon;
+        }
+
+        // Interactive 3D Parallax Tilt Effect
+        function init3DTilt(elementSelector) {
+            const elements = document.querySelectorAll(elementSelector);
+            elements.forEach(el => {
+                el.style.transformStyle = 'preserve-3d';
+                
+                el.addEventListener('mousemove', e => {
+                    const rect = el.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = ((centerY - y) / centerY) * 8; 
+                    const rotateY = ((x - centerX) / centerX) * 8; 
+                    
+                    el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.01) translateY(-2px)`;
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1) translateY(0)';
+                });
+            });
+        }
+        
+        // Initialize 3D Tilt for form container
+        init3DTilt('.form-container');
+
+        // Dynamic Custom Select Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            const nativeSelect = document.querySelector('.form-select');
+            if (!nativeSelect) return;
+
+            // Create wrapper element
+            const wrapper = document.createElement('div');
+            wrapper.className = 'custom-select-wrapper';
+
+            // Create trigger
+            const trigger = document.createElement('div');
+            trigger.className = 'custom-select-trigger';
+            
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'custom-select-value';
+            valueSpan.textContent = nativeSelect.options[nativeSelect.selectedIndex]?.textContent || 'Select the name of the Country';
+            
+            const arrowDiv = document.createElement('div');
+            arrowDiv.className = 'custom-select-arrow';
+            
+            trigger.appendChild(valueSpan);
+            trigger.appendChild(arrowDiv);
+
+            // Create options container
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'custom-select-options';
+
+            // Populated options
+            Array.from(nativeSelect.options).forEach((opt, idx) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'custom-select-option';
+                if (opt.disabled) {
+                    optDiv.classList.add('placeholder');
+                }
+                optDiv.textContent = opt.textContent;
+                optDiv.setAttribute('data-value', opt.value);
+                
+                // If it is the selected option originally, highlight it
+                if (opt.selected && !opt.disabled) {
+                    optDiv.classList.add('selected');
+                    trigger.classList.add('has-value');
+                }
+
+                optDiv.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (opt.disabled) return; // skip placeholder select
+
+                    // Update native select value
+                    nativeSelect.value = opt.value;
+                    
+                    // Dispatch change event to select if anyone is listening
+                    nativeSelect.dispatchEvent(new Event('change'));
+
+                    // Update UI trigger value text
+                    valueSpan.textContent = opt.textContent;
+                    trigger.classList.add('has-value');
+
+                    // Highlight selected item
+                    optionsContainer.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+                    optDiv.classList.add('selected');
+
+                    // Close dropdown
+                    wrapper.classList.remove('active');
+                });
+
+                optionsContainer.appendChild(optDiv);
+            });
+
+            wrapper.appendChild(trigger);
+            wrapper.appendChild(optionsContainer);
+
+            // Hide native select visually
+            nativeSelect.classList.add('custom-hidden');
+
+            // Insert custom select wrapper after the native select
+            nativeSelect.parentNode.insertBefore(wrapper, nativeSelect.nextSibling);
+
+            // Toggle active state on trigger click
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                wrapper.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!wrapper.contains(e.target)) {
+                    wrapper.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+ 
