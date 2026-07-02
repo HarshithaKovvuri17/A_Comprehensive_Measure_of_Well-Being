@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Human Development Index — Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1626;
+            --text-color: #ffffff;
+            --text-muted: #8c9bb4;
+            --card-bg: #241901;
+            --border-color: #d0a345;
+            --brass: #c89b3c;
+            --brass-hover: #e5b955;
+        }
+        body.light-theme {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --text-muted: #475569;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #d0a345;
+            --brass: #b08224;
+            --brass-hover: #c6952c;
+        }
+        body.light-theme {
+            background: linear-gradient(to bottom, #523a08 0%, #f8fafc 100%);
+            background-attachment: fixed;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #523a08 0%, #000000 100%);
+            background-attachment: fixed;
+            color: var(--text-color);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        /* Header / Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 6%;
+            background-color: rgba(7, 11, 19, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-brand span {
+            color: #c89b3c;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .navbar-menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-menu a.active, .navbar-menu a:hover {
+            color: var(--text-color);
+        }
+
+        .theme-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            color: var(--text-color);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme .navbar {
+            background-color: rgba(248, 250, 252, 0.8);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        body.light-theme .navbar-brand {
+            color: #0f172a;
+        }
+        body.light-theme .navbar-menu a {
+            color: #475569;
+        }
+        body.light-theme .navbar-menu a.active, body.light-theme .navbar-menu a:hover {
+            color: #0f172a;
+        }
+        body.light-theme .theme-toggle {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.08);
+            color: #475569;
+        }
+        body.light-theme .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #0f172a;
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            max-width: 600px;
+            margin: 80px auto;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 15px rgba(208, 163, 69, 0.4), 0 0 40px rgba(208, 163, 69, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px) scale(1.01) perspective(1000px) rotateX(1deg);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.5), 0 0 30px rgba(208, 163, 69, 0.65), 0 0 70px rgba(208, 163, 69, 0.28);
+        }
+
+        body.light-theme .result-card {
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06), 0 0 12px rgba(208, 163, 69, 0.3), 0 0 30px rgba(208, 163, 69, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+        }
+
+        body.light-theme .result-card:hover {
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1), 0 0 25px rgba(208, 163, 69, 0.55), 0 0 55px rgba(208, 163, 69, 0.22);
+        }
+
+        .title-gold {
+            color: var(--brass);
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            letter-spacing: 0.5px;
+        }
+        .subtitle-grey {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 18px;
+            margin: 0 0 40px 0;
+        }
+        .prediction-text {
+            color: #ffffff;
+            font-size: 34px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 14px 36px;
+            background: linear-gradient(90deg, #b8892e 0%, #d0a345 100%);
+            border: none;
+            border-radius: 50px;
+            color: #000000;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-bottom: 3.5px solid rgba(0, 0, 0, 0.35) !important;
+        }
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(208, 163, 69, 0.4);
+        }
+        .btn-back:active {
+            transform: translateY(2px) !important;
+            border-bottom-width: 1px !important;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+        .result-card *, .result-card {
+            transform-style: preserve-3d;
+        }
+        .result-card .title-red,
+        .result-card .subtitle-green,
+        .result-card .prediction-text,
+        .result-card .btn-back {
+            transform: translateZ(25px);
+            transition: transform 0.2s ease;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #04070d;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 64px 6% 32px 6%;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+
+        .footer-cols {
+            max-width: 1400px;
+            margin: 0 auto 48px auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #ffffff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-logo span {
+            color: #c89b3c;
+        }
+
+        .footer-col h4 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin: 0 0 20px 0;
+        }
+
+        .footer-col p {
+            line-height: 1.6;
+            margin: 0;
+            max-width: 320px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 32px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 1024px) {
+            .footer-cols {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <a href="/" class="navbar-brand">
+        <span>•</span> HDI Insight
+    </a>
+    <div class="navbar-menu">
+        <a href="/">Home</a>
+        {% if current_user and current_user.get('role') == 'Admin' %}
+        <a href="/admin" style="color: #c89b3c;">Admin Dashboard</a>
+        {% endif %}
+        <a href="/Prediction">Prediction</a>
+        <div class="theme-toggle">🌙</div>
+        {% if current_user %}
+        <style>
+            .profile-dropdown { display: none; position: absolute; top: 50px; right: 0; background-color: var(--card-bg, #241901); border: 1px solid var(--border-color, #d0a345); border-radius: 8px; width: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; overflow: hidden; text-align: left; }
+            .profile-dropdown.show { display: block; }
+            .profile-dropdown .user-info { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); line-height: 1.4; }
+            .profile-dropdown .user-info strong { display: block; color: var(--text-color, #fff); font-size: 14px; }
+            .profile-dropdown .user-info span { display: block; color: var(--text-muted, #8c9bb4); font-size: 12px; }
+            .profile-dropdown .dropdown-item { display: block; padding: 12px 15px; color: var(--text-color, #fff); text-decoration: none; font-size: 14px; transition: background 0.3s; }
+            .profile-dropdown .dropdown-item:hover { background-color: rgba(255,255,255,0.05); }
+            body.light-theme .profile-dropdown { box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1); }
+            body.light-theme .profile-dropdown .user-info { border-bottom: 1px solid rgba(0,0,0,0.1); }
+            body.light-theme .profile-dropdown .dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
+        </style>
+        <div class="user-profile" style="position: relative; display: flex; align-items: center; gap: 10px; margin-left: 15px; padding-left: 15px; border-left: 1px solid rgba(255,255,255,0.1);">
+            <img src="https://ui-avatars.com/api/?name={{ current_user.name|urlencode }}&background=c89b3c&color=fff&rounded=true&bold=true" alt="Profile" title="{{ current_user.name }}" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(200, 155, 60, 0.5); transition: border-color 0.3s ease; cursor: pointer;" onclick="document.getElementById('profile-dropdown').classList.toggle('show')">
+            <div id="profile-dropdown" class="profile-dropdown">
+                <div class="user-info">
+                    <strong>{{ current_user.name }}</strong>
+                    <span>{{ current_user.email }}</span>
+                </div>
+                <a href="/logout" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('click', function(e) {
+                const dropdown = document.getElementById('profile-dropdown');
+                if (dropdown && dropdown.classList.contains('show') && !e.target.closest('.user-profile')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        </script>
+        {% else %}
+        <a href="/login" style="margin-left: 15px;">Login</a>
+        {% endif %}
+    </div>
+    </header>
+
+<div class="result-card">
+    <div class="title-gold">Human Development Index</div>
+    <div class="subtitle-grey">A machine learning web application using flask</div>
+    
+    <div class="prediction-text">
+        {{ prediction_text }}
+    </div>
+
+    <!-- Chart Container -->
+    <div style="margin: 30px auto; max-width: 400px; height: 200px; position: relative;">
+        <canvas id="hdiChart"></canvas>
+    </div>
+
+    <a href="/Prediction" class="btn-back">Run Another Prediction</a>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const hdiScore = parseFloat("{{ hdi_score }}") || 0;
+        
+        const ctx = document.getElementById('hdiChart').getContext('2d');
+        
+        // HDI Categories: Low (<0.55), Medium (0.55-0.699), High (0.7-0.799), Very High (0.8+)
+        // We will build a simple horizontal bar gauge
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Your Score'],
+                datasets: [
+                    {
+                        label: 'HDI Score',
+                        data: [hdiScore],
+                        backgroundColor: hdiScore >= 0.8 ? '#00ff66' : 
+                                         hdiScore >= 0.7 ? '#ffff00' : 
+                                         hdiScore >= 0.55 ? '#ffa500' : '#ff3333',
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 2,
+                        borderRadius: 10,
+                        barThickness: 40
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y', // horizontal bar
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ' Score: ' + context.parsed.x.toFixed(3);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        min: 0,
+                        max: hdiScore + 0.05,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#8c9bb4', font: {size: 12} }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { display: false }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-cols">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <span>•</span> HDI Insight
+                </div>
+                <p>A machine-learning system that estimates the Human Development Index from life expectancy, education, income and connectivity indicators.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigate</h4>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/Prediction">Prediction</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Model</h4>
+                <p>Linear Regression<br>90 / 10 train-test split</p>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 HDI Prediction System. Built for educational and research purposes.
+        </div>
+    </footer>
+
+<script>
+    const toggleBtn = document.querySelector('.theme-toggle');
+    const sunIcon = '☀️';
+    const moonIcon = '🌙';
+
+    toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-theme');
+        if (document.body.classList.contains('light-theme')) {
+            toggleBtn.innerHTML = sunIcon;
+            localStorage.setItem('theme', 'light');
+        } else {
+            toggleBtn.innerHTML = moonIcon;
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-theme');
+        toggleBtn.innerHTML = sunIcon;
+    } else {
+        toggleBtn.innerHTML = moonIcon;
+    }
+
+    // Interactive 3D Parallax Tilt Effect
+    function init3DTilt(elementSelector) {
+        const elements = document.querySelectorAll(elementSelector);
+        elements.forEach(el => {
+            el.style.transformStyle = 'preserve-3d';
+            
+            el.addEventListener('mousemove', e => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((centerY - y) / centerY) * 10; 
+                const rotateY = ((x - centerX) / centerX) * 10; 
+                
+                el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.01) translateY(-4px)`;
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1) translateY(0)';
+            });
+        });
+    }
+    
+    // Initialize 3D Tilt for result card
+    init3DTilt('.result-card');
+</script>
+</body>
+</html>
+ 
+ 
