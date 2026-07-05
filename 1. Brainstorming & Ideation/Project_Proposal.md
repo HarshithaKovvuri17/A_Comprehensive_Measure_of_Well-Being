@@ -15,3 +15,4 @@ This project solves these issues by providing a unified web platform powered by 
 
 ## 4. Competitive Advantage & Market Value
 Unlike raw statistical software, this tool offers an accessible "statistical atlas" visual design. It provides a distinctive gauge animation that shows exactly where a prediction falls, making it an invaluable educational and planning tool for sociologists, economists, and students analyzing global well-being. 
+ 
