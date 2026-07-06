@@ -17,3 +17,4 @@ This SRS document outlines the functional modules and architectural constraints 
 * **Performance:** The web application must respond to prediction requests in under 500ms.
 * **Usability:** The UI must be responsive (mobile-friendly), utilizing Bootstrap 5 for a clean, accessible layout.
 * **Maintainability:** The project must maintain a modular structure, separating the ML training pipeline from the Flask application routes and Jinja2 templates. 
+ 
