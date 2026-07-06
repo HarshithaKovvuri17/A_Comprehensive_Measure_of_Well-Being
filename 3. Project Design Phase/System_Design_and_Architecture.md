@@ -52,3 +52,4 @@ The HDI Prediction System follows a classic Model-View-Controller (MVC) architec
 *   **Typography:** Serif display type for headers to maintain an academic and authoritative tone, with sans-serif for data inputs.
 *   **Data Visualization:** An animated HDI gauge visually representing the predicted score across the four development bands. 
  
+ 
