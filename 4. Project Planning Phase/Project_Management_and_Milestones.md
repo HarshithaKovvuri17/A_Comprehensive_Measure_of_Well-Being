@@ -23,3 +23,4 @@ The "A Comprehensive Measure of Well-Being" project was executed using an iterat
 
 ### Phase 3: Polish and Testing (Weeks 5-6)
 *   **Focus:** Refining the Bootstrap 5 UI, implementing the dark theme, writing the pytest suite (205 tests), and finalizing documentation. 
+ 
