@@ -20,3 +20,4 @@ The underlying Linear Regression model was evaluated on a 10% holdout test set w
 *   **Root Mean Squared Error (RMSE):** ~0.028.
 
 These metrics confirm the model provides highly accurate estimations of the Human Development Index based on the provided socio-economic parameters. 
+ 
