@@ -1,0 +1,99 @@
+# ==============================================================================
+# OS & Editor Files
+# ==============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ==============================================================================
+# IDE & Development Tools
+# ==============================================================================
+.idea/
+.vscode/
+*.swp
+*.swo
+.spyderproject
+.spyproject
+.ropeproject
+.gemini/
+
+# ==============================================================================
+# Python & Bytecode
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+build/
+dist/
+downloads/
+MANIFEST
+
+# ==============================================================================
+# Virtual Environments
+# ==============================================================================
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+*.local
+
+# ==============================================================================
+# Web Frameworks (Flask / Django)
+# ==============================================================================
+instance/
+.webassets-cache
+db.sqlite3
+db.sqlite3-journal
+
+# ==============================================================================
+# Testing & Coverage
+# ==============================================================================
+.pytest_cache/
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# ==============================================================================
+# Machine Learning & Data
+# ==============================================================================
+# Ignore datasets and large files, but explicitly track the trained model if needed
+# *.csv
+*.dat
+*.out
+*.hdf5
+# *.pkl (Uncomment if you want to ignore all pickle files. HDI.pkl is currently tracked.)
+
+# ==============================================================================
+# Logs & Application Outputs
+# ==============================================================================
+*.log
+pip-log.txt
+pip-delete-this-directory.txt
