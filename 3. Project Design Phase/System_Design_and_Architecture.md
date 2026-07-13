@@ -53,3 +53,4 @@ The HDI Prediction System follows a classic Model-View-Controller (MVC) architec
 *   **Data Visualization:** An animated HDI gauge visually representing the predicted score across the four development bands. 
  
  
+ 
