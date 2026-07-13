@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Human Development Index — Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #090e1a;
+            --text-color: #ffffff;
+            --text-muted: #8c9bb4;
+            --card-bg: #241901;
+            --border-color: #d0a345;
+            --brass: #c89b3c;
+            --brass-hover: #e5b955;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #523a08 0%, #000000 100%);
+            background-attachment: fixed;
+            color: var(--text-color);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 6%;
+            background-color: rgba(7, 11, 19, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-brand span {
+            color: #c89b3c;
+        }
+        
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .dashboard-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(208, 163, 69, 0.3);
+            padding-bottom: 20px;
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 36px;
+            color: #d0a345;
+            margin: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(208, 163, 69, 0.15);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: var(--brass);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 16px 0;
+        }
+
+        .stat-card .value {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            overflow-x: auto;
+        }
+
+        .table-container h2 {
+            font-family: 'Playfair Display', serif;
+            color: #d0a345;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px;
+            color: var(--brass);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(208, 163, 69, 0.3);
+        }
+
+        td {
+            padding: 16px;
+            color: #ffffff;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(208, 163, 69, 0.1);
+            color: var(--brass);
+            border: 1px solid rgba(208, 163, 69, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <a href="/" class="navbar-brand">
+            <span>•</span> HDI Insight
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 20px;">
+            <a href="/Prediction">Back to Console</a>
+            {% if current_user %}
+            <style>
+                .profile-dropdown { display: none; position: absolute; top: 50px; right: 0; background-color: var(--card-bg, #241901); border: 1px solid var(--border-color, #d0a345); border-radius: 8px; width: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; overflow: hidden; text-align: left; }
+                .profile-dropdown.show { display: block; }
+                .profile-dropdown .user-info { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); line-height: 1.4; }
+                .profile-dropdown .user-info strong { display: block; color: var(--text-color, #fff); font-size: 14px; }
+                .profile-dropdown .user-info span { display: block; color: var(--text-muted, #8c9bb4); font-size: 12px; }
+                .profile-dropdown .dropdown-item { display: block; padding: 12px 15px; color: var(--text-color, #fff); text-decoration: none; font-size: 14px; transition: background 0.3s; }
+                .profile-dropdown .dropdown-item:hover { background-color: rgba(255,255,255,0.05); }
+                body.light-theme .profile-dropdown { box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1); }
+                body.light-theme .profile-dropdown .user-info { border-bottom: 1px solid rgba(0,0,0,0.1); }
+                body.light-theme .profile-dropdown .dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
+            </style>
+            <div class="user-profile" style="position: relative; display: flex; align-items: center; padding-left: 15px; border-left: 1px solid rgba(255,255,255,0.1);">
+                <img src="https://ui-avatars.com/api/?name={{ current_user.name|urlencode }}&background=c89b3c&color=fff&rounded=true&bold=true" alt="Profile" title="{{ current_user.name }}" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(200, 155, 60, 0.5); cursor: pointer;" onclick="document.getElementById('profile-dropdown').classList.toggle('show')">
+                <div id="profile-dropdown" class="profile-dropdown">
+                    <div class="user-info">
+                        <strong>{{ current_user.name }}</strong>
+                        <span>{{ current_user.email }}</span>
+                    </div>
+                    <a href="/logout" class="dropdown-item">Logout</a>
+                </div>
+            </div>
+            <script>
+                document.addEventListener('click', function(e) {
+                    const dropdown = document.getElementById('profile-dropdown');
+                    if (dropdown && dropdown.classList.contains('show') && !e.target.closest('.user-profile')) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            </script>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>System Administrator Dashboard</h1>
+            <p style="color: var(--text-muted);">Live tracking of HDI predictions and platform usage.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Registered Users</h3>
+                <p class="value">{{ total_users }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Predictions Made</h3>
+                <p class="value">{{ total_predictions }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active ML Models</h3>
+                <p class="value">{{ total_models }}</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h2>Recent Predictions Log</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>User Name</th>
+                        <th>User Email</th>
+                        <th>Prediction Score</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in recent_logs %}
+                    <tr>
+                        <td style="color: var(--text-muted);">{{ log.date }}</td>
+                        <td>{{ log.name }}</td>
+                        <td style="color: var(--text-muted);">{{ log.email }}</td>
+                        <td style="font-weight: 700;">{{ log.score }}</td>
+                        <td><span class="badge">{{ log.category }}</span></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">No predictions have been made yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
